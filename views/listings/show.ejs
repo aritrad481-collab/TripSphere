@@ -1,0 +1,533 @@
+<% layout("/layouts/boilerplate") %>
+
+<script>
+
+    const mapToken = "<%= process.env.MAP_TOKEN %>";
+
+    const listing = <%- JSON.stringify(listing) %>;
+
+    let coordinates = null;
+
+    if (
+        listing.geometry &&
+        listing.geometry.coordinates &&
+        listing.geometry.coordinates.length === 2
+    ) {
+
+        coordinates =
+            listing.geometry.coordinates;
+
+    }
+
+    console.log("========== MAP DEBUG ==========");
+
+    console.log(
+        "Map token:",
+        mapToken ? "FOUND" : "MISSING"
+    );
+
+    console.log(
+        "Listing:",
+        listing.title
+    );
+
+    console.log(
+        "Location:",
+        listing.location
+    );
+
+    console.log(
+        "Geometry:",
+        listing.geometry
+    );
+
+    console.log(
+        "Coordinates:",
+        coordinates
+    );
+
+    console.log("===============================");
+
+</script>
+<div class="listing-details-page"> 
+
+<!-- Back Button --> 
+<a href="/listings" class="back-link"> 
+<i class="fa-solid fa-arrow-left"></i> 
+Back to Listings 
+</a> 
+
+
+<!-- Main Card --> 
+<div class="listing-details-card"> 
+
+<!-- Image --> 
+<div class="listing-image-wrapper"> 
+<img 
+src="<%= listing.image.url %>" 
+class="listing-details-image" 
+alt="<%= listing.title %>" 
+> 
+</div> 
+
+<p class = "card-text">Owned by ~<i><%= listing.owner.username%></i></p>
+<br/><br/>
+<!-- Details --> 
+<div class="listing-details-content"> 
+
+<!-- Title --> 
+<h1 class="listing-details-title"> 
+<%= listing.title %> 
+</h1> 
+
+<!-- Location --> 
+<p class="listing-location"> 
+<i class="fa-solid fa-location-dot"></i> 
+<%= listing.location %>, <%= listing.country %> 
+</p> 
+
+<hr> 
+
+
+<!-- Description --> 
+<h4 class="details-heading"> 
+About this place 
+</h4> 
+
+<p class="listing-description"> 
+<%= listing.description %> 
+</p> 
+
+
+<!-- Price --> 
+<div class="price-box"> 
+
+<div> 
+    <span class="price-label"> 
+        Price per night 
+    </span> 
+
+    <span class="price"> 
+        ₹<%= listing.price.toLocaleString("en-IN") %> 
+    </span> 
+</div> 
+
+</div> 
+
+
+<!-- Extra Information --> 
+<div class="listing-info"> 
+
+<div class="info-item"> 
+    <i class="fa-solid fa-earth-americas"></i> 
+    <div> 
+        <span>Country</span> 
+        <strong><%= listing.country %></strong> 
+    </div> 
+</div> 
+
+<div class="info-item"> 
+    <i class="fa-solid fa-location-dot"></i> 
+    <div> 
+        <span>Location</span> 
+<strong><%= listing.location %></strong> 
+</div> 
+</div> 
+
+</div> 
+
+
+<!-- Buttons --> 
+<% if(currUser && listing.owner._id.equals(currUser._id)){ %>
+<div class="listing-actions"> 
+
+<a 
+href="/listings/<%= listing._id %>/edit" 
+class="edit-listing-btn" 
+> 
+<i class="fa-solid fa-pen-to-square"></i> 
+Edit 
+</a> 
+
+
+<form 
+method="POST" 
+action="/listings/<%= listing._id %>?_method=DELETE" 
+> 
+<button 
+type="submit" 
+class="delete-listing-btn" 
+> 
+<i class="fa-solid fa-trash"></i> 
+Delete  
+</button> 
+</form> 
+
+</div> 
+
+</div> 
+
+</div>
+<% } %>
+
+<!-- ================= REVIEW SECTION ================= -->
+<% if(currUser){ %>
+<div class="review-section">
+
+<!-- LEAVE REVIEW -->
+
+<h2 class="review-title">
+Leave a Review
+</h2>
+
+<form
+action="/listings/<%= listing._id %>/reviews"
+method="POST"
+class="review-form needs-validation"
+novalidate
+>
+
+<!-- RATING -->
+
+<div class="rating-box">
+
+<label class="form-label">
+Your Rating
+</label>
+
+<div class="star-rating">
+
+<input
+type="radio"
+name="review[rating]"
+id="star5"
+value="5"
+required
+>
+<label for="star5">★</label>
+
+<input
+type="radio"
+name="review[rating]"
+id="star4"
+value="4"
+>
+<label for="star4">★</label>
+
+<input
+type="radio"
+name="review[rating]"
+id="star3"
+value="3"
+>
+<label for="star3">★</label>
+
+<input
+type="radio"
+name="review[rating]"
+id="star2"
+value="2"
+>
+<label for="star2">★</label>
+
+<input
+type="radio"
+name="review[rating]"
+id="star1"
+value="1"
+>
+<label for="star1">★</label>
+
+</div>
+
+<div class="invalid-feedback">
+Please select a rating.
+</div>
+
+</div>
+
+
+<!-- COMMENT -->
+
+<div class="mb-3">
+
+<label
+for="comment"
+class="form-label"
+>
+Your Review
+</label>
+
+<textarea
+name="review[comment]"
+id="comment"
+class="form-control"
+rows="4"
+minlength="5"
+maxlength="500"
+placeholder="Write your review here..."
+required
+></textarea>
+
+<div class="invalid-feedback">
+Please enter between 5 and 500 characters.
+</div>
+
+<small
+class="text-muted"
+id="character-count"
+>
+0 / 500
+</small>
+
+</div>
+
+
+<!-- SUBMIT -->
+
+<button
+type="submit"
+class="submit-review-btn"
+>
+<i class="fa-solid fa-star"></i>
+Submit Review
+</button>
+
+</form>
+<% } %>
+
+<!-- ================= ALL REVIEWS ================= -->
+
+<div class="all-reviews">
+
+<h2 class="review-title">
+Guest Reviews
+</h2>
+
+
+<% if (!listing.reviews || listing.reviews.length === 0) { %>
+
+<div class="no-reviews">
+
+<i class="fa-regular fa-comment-dots"></i>
+
+<p>
+No reviews yet.
+</p>
+
+<span>
+Be the first person to review this place!
+</span>
+
+</div>
+
+<% } else { %>
+
+<div class="reviews-grid">
+
+<% for (let review of listing.reviews) { %>
+
+<div class="review-card">
+
+<!-- REVIEW HEADER -->
+
+<div class="review-card-header">
+
+<div class="review-avatar">
+<i class="fa-solid fa-user"></i>
+</div>
+
+<div>
+
+<strong>
+Guest
+</strong>
+
+<!-- STARS -->
+
+<div class="review-stars">
+
+<% for (let i = 1; i <= 5; i++) { %>
+
+<% if (i <= review.rating) { %>
+
+<span class="star-filled">
+★
+</span>
+
+<% } else { %>
+
+<span class="star-empty">
+☆
+</span>
+
+<% } %>
+
+<% } %>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- COMMENT -->
+
+<p class="review-comment">
+<%= review.comment %>
+</p>
+
+
+<!-- DATE + DELETE -->
+
+<div class="review-footer">
+
+<small class="review-date">
+
+<i class="fa-regular fa-clock"></i>
+
+<%= review.createdAt.toDateString() %>
+
+</small>
+
+
+<!-- DELETE REVIEW -->
+
+<form
+method="POST"
+action="/listings/<%= listing._id %>/reviews/<%= review._id %>?_method=DELETE"
+>
+
+<button
+type="submit"
+class="delete-review-btn"
+onclick="return confirm('Are you sure you want to delete this review?')"
+>
+
+<i class="fa-solid fa-trash"></i>
+Delete
+
+</button>
+
+</form>
+
+</div>
+
+</div>
+
+<% } %>
+
+</div>
+
+<% } %>
+
+</div>
+<hr>
+
+<div class="map-section">
+
+    <h3>Where you'll be</h3>
+
+    <% if (
+        listing.geometry &&
+        listing.geometry.coordinates &&
+        listing.geometry.coordinates.length === 2
+    ) { %>
+
+        <div id="map"></div>
+
+    <% } else { %>
+
+        <div class="map-error">
+            <p>
+                Map location is not available for this listing.
+            </p>
+        </div>
+
+    <% } %>
+
+</div>
+
+</div>
+
+
+
+<!-- ================= CLIENT SIDE VALIDATION ================= -->
+
+<script>
+
+const reviewForm =
+document.querySelector(".review-form");
+
+const comment =
+document.querySelector("#comment");
+
+const characterCount =
+document.querySelector("#character-count");
+
+
+// CHARACTER COUNTER
+
+comment.addEventListener("input", () => {
+
+const length = comment.value.trim().length;
+
+characterCount.textContent =
+`${length} / 500`;
+
+});
+
+
+// FORM VALIDATION
+
+reviewForm.addEventListener("submit", (event) => {
+
+const selectedRating =
+document.querySelector(
+'input[name="review[rating]"]:checked'
+);
+
+const commentValue =
+comment.value.trim();
+
+
+// RATING VALIDATION
+
+if (!selectedRating) {
+
+event.preventDefault();
+event.stopPropagation();
+
+reviewForm.classList.add("was-validated");
+
+return;
+
+}
+
+
+// COMMENT VALIDATION
+
+if (
+commentValue.length < 5 ||
+commentValue.length > 500
+) {
+
+event.preventDefault();
+event.stopPropagation();
+
+reviewForm.classList.add("was-validated");
+
+return;
+
+}
+
+
+// VALID
+
+reviewForm.classList.add("was-validated");
+
+});
+
+</script>
+<script src="/js/map.js"></script>

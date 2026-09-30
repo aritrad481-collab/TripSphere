@@ -1,0 +1,204 @@
+<% layout("layouts/boilerplate") %>
+
+<div class="listing-container">
+
+    <!-- Page Heading -->
+    <h3 class="page-title">
+        <i class="fa-solid fa-pen-to-square form-icon"></i>
+        Edit Your Listing
+    </h3>
+
+    <form
+        method="POST"
+        action="/listings/<%= listing._id %>?_method=PUT"
+        novalidate
+        class="needs-validation"
+        enctype="multipart/form-data"
+    >
+
+        <!-- Title -->
+        <div class="mb-4">
+            <label for="title" class="form-label">
+                Listing Title <span class="required">*</span>
+            </label>
+
+            <input
+                id="title"
+                name="listing[title]"
+                value="<%= listing.title %>"
+                placeholder="Enter your listing title"
+                type="text"
+                class="form-control"
+                required
+            >
+
+            <div class="valid-feedback">
+                Title Looks good!
+            </div>
+        </div>
+
+
+        <!-- Description -->
+        <div class="mb-4">
+            <label for="description" class="form-label">
+                Description <span class="required">*</span>
+            </label>
+
+            <textarea
+                id="description"
+                name="listing[description]"
+                placeholder="Describe your property..."
+                class="form-control"
+                required
+            ><%= listing.description %></textarea>
+
+            <div class="invalid-feedback">
+                Please enter a short description...
+            </div>
+        </div>
+
+
+        <!-- Original Image -->
+        <div class="mb-4">
+
+            <label class="form-label">
+                Original Listing Image
+            </label>
+
+            <% if (listing.image && listing.image.url) { %>
+
+                <div>
+                    <img
+                        src="<%= listing.image.url %>"
+                        alt="Listing Image"
+                        style="width: 300px; height: 200px; object-fit: cover; border-radius: 10px;"
+                    >
+                </div>
+
+            <% } else { %>
+
+                <p>No image available</p>
+
+            <% } %>
+
+        </div>
+
+
+        <!-- Upload New Image -->
+        <div class="mb-4">
+
+            <label for="image" class="form-label">
+                Upload New Image
+            </label>
+
+            <input
+                id="image"
+                name="image"
+                type="file"
+                class="form-control"
+                accept="image/*"
+            >
+
+        </div>
+
+
+        <!-- Price + Country -->
+        <div class="row">
+
+            <!-- Price -->
+            <div class="col-md-6 mb-4">
+
+                <label for="price" class="form-label">
+                    Price per night <span class="required">*</span>
+                </label>
+
+                <div class="input-group">
+
+                    <span class="input-group-text">
+                        ₹
+                    </span>
+
+                    <input
+                        id="price"
+                        name="listing[price]"
+                        value="<%= listing.price %>"
+                        placeholder="Enter price"
+                        type="number"
+                        class="form-control"
+                        required
+                    >
+
+                    <div class="invalid-feedback">
+                        Please enter valid price
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- Country -->
+            <div class="col-md-6 mb-4">
+
+                <label for="country" class="form-label">
+                    Country <span class="required">*</span>
+                </label>
+
+                <input
+                    id="country"
+                    name="listing[country]"
+                    value="<%= listing.country %>"
+                    placeholder="Enter country"
+                    type="text"
+                    class="form-control"
+                    required
+                >
+
+                <div class="invalid-feedback">
+                    Country name should be valid
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Location -->
+        <div class="mb-4">
+
+            <label for="location" class="form-label">
+                Location <span class="required">*</span>
+            </label>
+
+            <input
+                id="location"
+                name="listing[location]"
+                value="<%= listing.location %>"
+                placeholder="Enter city/location"
+                type="text"
+                class="form-control"
+                required
+            >
+
+            <div class="invalid-feedback">
+                Location should be valid
+            </div>
+
+        </div>
+
+
+        <!-- Update Button -->
+        <div class="mt-4">
+
+            <button type="submit" class="edit-btn">
+                <i class="fa-solid fa-pen-to-square"></i>
+                Update
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+
+<script src="/js/script.js"></script>

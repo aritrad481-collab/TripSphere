@@ -1,0 +1,66 @@
+
+<nav class="navbar navbar-expand-md bg-body-light border-bottom sticky-top">
+
+<div class="container-fluid">
+
+<!-- Logo -->
+<a class="navbar-brand" href="/">
+    <i class="fa-brands fa-airbnb"></i>
+</a>
+
+<!-- Mobile Toggle -->
+<button
+    class="navbar-toggler"
+    type="button"
+    data-bs-toggle="collapse"
+    data-bs-target="#navbarNavAltMarkup"
+>
+    <span class="navbar-toggler-icon"></span>
+</button>
+
+<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+
+    <!-- Left Navigation -->
+    <div class="navbar-nav">
+
+
+
+<a class="nav-link" href="/listings">
+    Expolore
+</a>
+
+
+
+</div>
+
+
+<!-- Right Authentication Buttons -->
+<div class="auth-buttons ms-auto">
+<a class="nav-link" href="/listings/new">
+   <b>TripSphere your home</b> 
+</a>
+<% if (!currUser) { %>
+
+    <a href="/signup" class="auth-btn signup-btn">
+        Sign Up
+    </a>
+
+    <a href="/login" class="auth-btn login-btn">
+        Login
+    </a>
+
+<% } else { %>
+
+    <a href="/logout" class="auth-btn logout-btn">
+        Logout
+    </a>
+
+<% } %>
+<!-- Dark / Light Mode --> <button id="darkModeToggle" class="dark-mode-btn" type="button" title="Toggle dark mode" > 🌙 </button>
+</div>
+
+</div>
+
+</div>
+
+</nav>
